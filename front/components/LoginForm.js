@@ -3,7 +3,7 @@ import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import { useInput } from '../pages/signup';
 
-function LoginForm() {
+const LoginForm = () => {
 	const [id, onChangeId] = useInput('');
 	const [password, onChangePassword] = useInput('');
 	const onSubmitForm = useCallback(() => {
@@ -13,7 +13,7 @@ function LoginForm() {
 	}, [id, password]);
 
 	return (
-		<Form onFinish={onSubmitForm}>
+		<Form onFinish={onSubmitForm} style={{padding: "10px"}}>
 			<div>
 				<label htmlFor="user-id">아이디</label>
 				<br />
@@ -30,7 +30,7 @@ function LoginForm() {
 					required
 				/>
 			</div>
-			<div>
+			<div style={{marginTop: "10px"}}>
 				<Button type="primary" htmlType="submit" loading={false}>
 					로그인
 				</Button>

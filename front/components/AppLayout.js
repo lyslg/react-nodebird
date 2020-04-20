@@ -1,20 +1,22 @@
 import React from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
-import { Menu, Input, Row, Col, Card, Avatar } from 'antd';
+import { Menu, Input, Row, Col } from 'antd';
 import LoginForm from './LoginForm';
+import UserProfile from '../components/UserProfile'
+
 const dummy = {
 	nickname: 'yongE',
 	Post: [],
 	Followings: [],
-    Followers: [],
-    isLoggedIn: false
+	Followers: [],
+	isLoggedIn: false,
 };
 
 const AppLayout = ({ children }) => {
 	return (
 		<div>
-			<Menu mode="horizontal">
+			<Menu mode="horizontal" style={{ marginBottom: '20px' }}>
 				<Menu.Item key="home">
 					<Link href="/">
 						<a>노드버드</a>
@@ -30,41 +32,17 @@ const AppLayout = ({ children }) => {
 				</Menu.Item>
 			</Menu>
 
-			<Row>
+			<Row gutter={8}>
 				<Col xs={24} md={6}>
-					{dummy.isLoggedIn ? (
-						<Card
-							actions={[
-								<div key="twit">
-									짹짹
-									<br />
-									{dummy.Post.length}
-								</div>,
-								<div key="followings">
-									팔로잉
-									<br />
-									{dummy.Followings.length}
-								</div>,
-								<div key="follower">
-									팔로워
-									<br />
-									{dummy.Followers.length}
-								</div>,
-							]}>
-							<Card.Meta
-								avatar={<Avatar>{dummy.nickname[0]}</Avatar>}
-								title={dummy.nickname}
-							/>
-						</Card>
-					) : (
-						<LoginForm />
-					)}
+					{dummy.isLoggedIn ? <UserProfile /> : <LoginForm />}
 				</Col>
-				<Col xs={24} md={24}>
+				<Col xs={24} md={12}>
 					{children}
 				</Col>
-				<Col xs={12} md={6}>
-					세번째
+				<Col xs={24} md={6}>
+					<Link href="https://www.zerocho.com" prefetch={false}>
+						<a target="_blank">Made by yong.E</a>
+					</Link>
 				</Col>
 			</Row>
 		</div>
