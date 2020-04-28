@@ -1,15 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import { Input, Form, Button, Checkbox } from 'antd';
+import {
+  Input, Form, Button, Checkbox,
+} from 'antd';
 import PropTypes from 'prop-types';
-import { signUpAction } from '../reducers/user';
 import { useDispatch } from 'react-redux';
+import { signUpRequestAction } from '../reducers/user';
 
 const TextInput = ({ value }) => {
   return <div>{value}</div>;
 };
 
 TextInput.propTypes = {
-  value: PropTypes.string,
+  value: PropTypes.string.isRequired,
 };
 
 export const useInput = (initValue = null) => {
@@ -41,7 +43,7 @@ const Signup = () => {
       return setTermError(true);
     }
     dispatch(
-      signUpAction({
+      signUpRequestAction({
         id,
         password,
         nick,
