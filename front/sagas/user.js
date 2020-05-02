@@ -42,15 +42,18 @@ function* signUp() {
   try {
     // yield fork(logger) // logger => 기록을 저장하는 함수, 10초 걸림
     yield call(signUpAPI); // call 동기 fork 비동기
-    yield put({
-      // put은 dispatch 동일
-      type: SIGN_UP_SUCCESS,
-    });
+    yield delay(2000);
+    throw new Error('에러에러에러');
+    // yield put({
+    //   // put은 dispatch 동일
+    //   type: SIGN_UP_SUCCESS,
+    // });
   } catch (e) {
     // loginAPI 실패
-    // console.error(e);
+    console.error(e);
     yield put({
       type: SIGN_UP_FAILURE,
+      error: e,
     });
   }
 }
