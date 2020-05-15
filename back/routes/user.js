@@ -36,7 +36,9 @@ router.get('/:id', (req, res) => { // 남의 정보 가져오는 것 ex) /3
 
 })
 router.post('/logout', (req, res) => { // /api/user/logout
-
+  req.logout();
+  req.session.destroy();
+  res.send('logout success')
 })
 router.post('/login', (req, res, next) => { // POST /api/user/login
   passport.authenticate('local', (err, user, info) => {
