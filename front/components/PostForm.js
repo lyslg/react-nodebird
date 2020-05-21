@@ -6,7 +6,7 @@ import { ADD_POST_REQUEST } from '../reducers/post';
 
 const PostForm = () => {
   const dispatch = useDispatch();
-  const [text, setText] = useState();
+  const [text, setText] = useState('');
   const { imagePaths, isAddingPost, postAdded } = useSelector((state) => state.post);
   
   useEffect(() => {
@@ -14,17 +14,20 @@ const PostForm = () => {
   }, [postAdded === true]);
 
   const onSubmitForm = useCallback(() => {
+    if (!text || !text.trim()) {
+      return alert('게시글을 작성하세요.');
+    }
     dispatch({
       type: ADD_POST_REQUEST,
       data: {
-        text,
+        content: text,
       },
     });
-  }, []);
+  }, [text]);
 
   const onChangeText = useCallback((e) => {
     setText(e.target.value);
-  });
+  }, []);
   return (
     <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmitForm}>
       <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요?" value={text} onChange={onChangeText} />

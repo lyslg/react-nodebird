@@ -15,6 +15,7 @@ const postsAPIRouter = require('./routes/posts');
 dotenv.config();
 const app = express();
 db.sequelize.sync();
+// db.sequelize.sync({force:true});
 passportConfig();
 
 app.use(morgan('dev'));
