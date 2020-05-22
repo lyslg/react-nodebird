@@ -1,16 +1,5 @@
 export const initialState = {
-  mainPosts: [
-    {
-      id: 1,
-      User: {
-        id: 1,
-        nickname: 'yongE',
-      },
-      content: '첫번째 게시글',
-      img: 'https://avatars0.githubusercontent.com/u/10962668?s=60&v=4',
-      Comments: [],
-    },
-  ], // 화면에 보일 포스트들
+  mainPosts: [], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
   addPostErrorReason: false, // 포스트 업로드 실패 사유
   isAddingPost: false, // 포스트 업로드중
@@ -18,26 +7,6 @@ export const initialState = {
   isAddingComment: false,
   addCommentErrorReason: false, // 코멘트 업로드 실패 사유
   commentAdded: false, // 코멘트 업로드 성공
-};
-
-const dummyPost = {
-  id: 2,
-  User: {
-    id: 1,
-    nickname: '용이',
-  },
-  content: 'This is dummy post!!',
-  Comments: [],
-};
-
-const dummyComment = {
-  id: 1,
-  User: {
-    id: 1,
-    nickname: '용이',
-  },
-  createdAt: new Date(),
-  content: "It's sdummy Comment",
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';
@@ -122,7 +91,7 @@ export default (state = initialState, action) => {
     case ADD_COMMENT_SUCCESS: {
       const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, dummyComment];
+      const Comments = [...post.Comments, action.data.comment];
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = { ...post, Comments };
 

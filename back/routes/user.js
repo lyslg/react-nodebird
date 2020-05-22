@@ -38,9 +38,11 @@ router.post('/', async (req, res, next) => { //POST /api/user 회원가입
     return next(e);
   }
 });
-router.get('/:id', (req, res) => { // 남의 정보 가져오는 것 ex) /3
+router.get('/:id', (req, res) => { // 남의 정보 가져오는 것 ex) /api/user/123
 
 })
+
+router.get('/hashtag/:name') // /hashtag/유튜브
 router.post('/logout', (req, res) => { // /api/user/logout
   req.logout();
   req.session.destroy();
