@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { ADD_COMMENT_REQUEST } from '../reducers/post';
+import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
   const [commentFormOpend, setCommentFormOpened] = useState(false);
@@ -22,9 +22,16 @@ const PostCard = ({ post }) => {
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(prev => !prev);
+    if (!commentFormOpend) {
+      dispatch({
+        type: LOAD_COMMENTS_REQUEST,
+        data: post.id,
+      });
+    }
   }, []);
 
   const onSubmitComment = useCallback(() => {
+    console.log('commentText is ', commentText);
     if (!me) {
       alert('로그인이 필요합니다.');
     }
@@ -32,9 +39,10 @@ const PostCard = ({ post }) => {
       type: ADD_COMMENT_REQUEST,
       data: {
         postId: post.id,
+        content: commentText,
       },
     });
-  }, [me && me.id]);
+  }, [me && me.id, commentText]);
 
   useEffect(() => {
     setCommentText('');
@@ -58,18 +66,35 @@ const PostCard = ({ post }) => {
         extra={<Button>팔로우</Button>}
       >
         <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+          avatar={
+            <Link
+              href={{ pathname: '/user', query: { id: post.User.id } }}
+              as={`/user/${post.User.id}`}
+            >
+              <a>
+                <Avatar>{post.User.nickname[0]}</Avatar>
+              </a>
+            </Link>
+          }
           title={post.User.nickname}
-          description={(
-            <div>{post.content.split(/(#[^\s]+)/g).map((v) => {
-              if (v.match(/#[^\s]+/)) {
-                return (
-                  <Link href="/hashtag" key={v}><a href="/hashtag">{v}</a></Link>
-                );
-              }
-              return v;
-            })}
-            </div>)}
+          description={
+            <div>
+              {post.content.split(/(#[^\s]+)/g).map((v) => {
+                if (v.match(/#[^\s]+/)) {
+                  return (
+                    <Link
+                      href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }}
+                      as={`/hashtag/${v.slice(1)}`}
+                      key={v}
+                    >
+                      <a>{v}</a>
+                    </Link>
+                  );
+                }
+                return v;
+              })}
+            </div>
+          }
         />
       </Card>
       {commentFormOpend && (
@@ -78,17 +103,28 @@ const PostCard = ({ post }) => {
             <Form.Item>
               <Input.TextArea row={4} value={commentText} onChange={onChangeCommentText} />
             </Form.Item>
-            <Button type="primary" htmlType="submit" loading={isAddingComment}>삐악</Button>
+            <Button type="primary" htmlType="submit" loading={isAddingComment}>
+              삐악
+            </Button>
           </Form>
-          <List 
+          <List
             header={`${post.Comments ? post.Comments.length : 0} 댓글`}
             itemLayout="horizontal"
             dataSource={post.Comments || []}
-            renderItem={item => (
+            renderItem={(item) => (
               <li>
-                <Comment 
+                <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link
+                      href={{ pathname: '/user', query: { id: item.User.id } }}
+                      as={`/user/${item.User.id}`}
+                    >
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
               </li>

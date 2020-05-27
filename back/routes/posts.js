@@ -1,6 +1,7 @@
 const express = require('express');
-const router = express.Router();
 const db = require('../models');
+
+const router = express.Router();
 
 router.get('/', async (req, res, next) => { // GET /api/posts
   try {
