@@ -1,9 +1,25 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const db = require('../models');
 const { isLoggedIn } = require('./middleware');
 const router = express.Router();
 
-router.post('/', isLoggedIn, async (req, res, next) => { // POST /api/post
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, ext); // 이미지.png, ext===.png, basename===이미지
+      done(null, basename + new Date().valueOf() + ext);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST /api/post
   try {
     const hashtags = req.body.content.match(/#[^\s]+/g);
     const newPost = await db.Post.create({
@@ -17,6 +33,17 @@ router.post('/', isLoggedIn, async (req, res, next) => { // POST /api/post
       console.log(result);
       await newPost.addHashtags(result.map(r => r[0]))
     }
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) { // 이미지 주소를 여러개 올리면 image: [주소1, 주소2]
+        const images = await Promise.all(req.body.image.map((image) => {
+          return db.Image.create({ src: image })
+        }))
+        await newPost.addImages(images);
+      } else { // 이미지를 하나만 올리면 image: 주소1
+        const image = await db.Image.create({ src: req.body.image })
+        await newPost.addImage(image);
+      }
+    }
     // const User = await newPost.getUser();
     // newPost.User = User;
     // res.json(newPost);
@@ -24,6 +51,8 @@ router.post('/', isLoggedIn, async (req, res, next) => { // POST /api/post
       where: { id: newPost.id },
       include: [{
         model: db.User,
+      }, {
+        model: db.Image,
       }]
     })
     res.json(fullPost);
@@ -33,8 +62,9 @@ router.post('/', isLoggedIn, async (req, res, next) => { // POST /api/post
   }
 })
 
-router.post('/images', (req, res) => {
-
+router.post('/images', upload.array('image'), (req, res) => {
+  console.log(req.files);
+  res.json(req.files.map(v => v.filename));
 })
 
 

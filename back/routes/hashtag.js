@@ -13,6 +13,8 @@ router.get('/:tag', async (req, res, next) => {
         }, {
           model: db.User,
           attibutes: ['id', 'nickname'],
+        }, {
+          model: db.Image,
         }
       ],
     });
