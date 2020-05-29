@@ -1,17 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Button, Card, Avatar, Input, Form, List, Comment,
-} from 'antd';
+import { Button, Card, Avatar, Input, Form, List, Comment } from 'antd';
 import Link from 'next/link';
-import {
-  RetweetOutlined,
-  HeartOutlined,
-  MessageOutlined,
-  EllipsisOutlined,
-} from '@ant-design/icons';
+import { RetweetOutlined, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST } from '../reducers/post';
+import PostImages from './PostImages';
 
 const PostCard = ({ post }) => {
   const [commentFormOpend, setCommentFormOpened] = useState(false);
@@ -56,7 +50,7 @@ const PostCard = ({ post }) => {
     <div>
       <Card
         key={+post.createdAt}
-        cover={post.img && <img alt="example" src={post.img} />}
+        cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
           <HeartOutlined key="heart" />,
