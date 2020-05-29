@@ -11,6 +11,11 @@ router.get('/', async (req, res, next) => { // GET /api/posts
         attiributes: ['id', 'nickname'],
       }, {
         model: db.Image,
+      }, {
+        model: db.User,
+        through: 'Like',
+        as: 'Likers',
+        attiributes: ['id']
       }],
       order: [['createdAt', 'DESC'], ['updatedAt', 'ASC']] // DESC는 내림차순, ASC는 오름차순
     });

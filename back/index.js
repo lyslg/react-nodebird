@@ -34,9 +34,9 @@ app.use(expressSession({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false, // https를 사용할때 true
+    secure: false, // https를 쓸 때 true
   },
-  name: 'rnbck'
+  name: 'rnbck',
 }));
 app.use(passport.initialize());
 app.use(passport.session());
