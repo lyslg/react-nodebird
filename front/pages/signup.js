@@ -43,7 +43,8 @@ const Signup = () => {
       Router.push('/');
     }
   }, [me && me.id]);
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback((e) => {
+    e.preventDefault();
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -73,7 +74,7 @@ const Signup = () => {
 
   return (
     <>
-      <Form onFinish={onSubmit} style={{ padding: 10 }}>
+      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
         <TextInput value="123" />
         <div>
           <label htmlFor="user-id">아이디</label>

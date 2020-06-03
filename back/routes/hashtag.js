@@ -20,6 +20,15 @@ router.get('/:tag', async (req, res, next) => {
         through: 'Like',
         as: 'Likers',
         attiributes: ['id']
+      }, {
+        model: db.Post,
+        as: 'Retweet',
+        include: [{
+          model: db.User,
+          attiributes: ['id', 'nickname'],
+        }, {
+          model: db.Image,
+        }]
       }
       ],
     });

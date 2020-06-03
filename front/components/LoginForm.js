@@ -12,7 +12,8 @@ const LoginForm = () => {
   const { isLoggingIn } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const onSubmitForm = useCallback(() => {
+  const onSubmitForm = useCallback((e) => {
+    e.preventDefault();
     dispatch({
       type: LOG_IN_REQUEST,
       data: {
@@ -23,7 +24,7 @@ const LoginForm = () => {
   }, [id, password]);
 
   return (
-    <Form onFinish={onSubmitForm} style={{ padding: '10px' }}>
+    <Form onSubmit={onSubmitForm} style={{ padding: '10px' }}>
       <div>
         <label htmlFor="user-id">아이디</label>
         <br />

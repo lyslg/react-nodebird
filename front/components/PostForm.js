@@ -16,7 +16,8 @@ const PostForm = () => {
     setText('');
   }, [postAdded === true]);
 
-  const onSubmitForm = useCallback(() => {
+  const onSubmitForm = useCallback((e) => {
+    e.preventDefault();
     if (!text || !text.trim()) {
       return alert('게시글을 작성하세요.');
     }
@@ -59,7 +60,7 @@ const PostForm = () => {
   }, []);
 
   return (
-    <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmitForm}>
+    <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onSubmit={onSubmitForm}>
       <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요?" value={text} onChange={onChangeText} />
       <div>
         <input type="file" multiple hidden ref={imageInput} onChange={onChangeImages} />
