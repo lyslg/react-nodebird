@@ -5,6 +5,9 @@ import axios from 'axios';
 import {
   LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
   LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
+  FOLLOW_USER_REQUEST, FOLLOW_USER_SUCCESS, FOLLOW_USER_FAILURE, UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_SUCCESS, UNFOLLOW_USER_FAILURE,
+  LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE, LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
+  REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE,
 } from '../reducers/user';
 
 // LOG IN
@@ -119,6 +122,156 @@ function* watchLoadUser() {
   yield takeEvery(LOAD_USER_REQUEST, loadUser);
 }
 
+function followAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.post(`/user/${userId}/follow`, {}, {
+    withCredentials: true,
+  });
+}
+
+function* follow(action) {
+  try {
+    // yield call(FollowAPI); // call 동기 fork 비동기
+    const result = yield call(followAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: FOLLOW_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: FOLLOW_USER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchFollow() {
+  yield takeEvery(FOLLOW_USER_REQUEST, follow);
+}
+
+function unfollowAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.delete(`/user/${userId}/follow`, {
+    withCredentials: true,
+  });
+}
+
+function* unfollow(action) {
+  try {
+    // yield call(unfollowAPI); // call 동기 fork 비동기
+    const result = yield call(unfollowAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: UNFOLLOW_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: UNFOLLOW_USER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchUnfollow() {
+  yield takeEvery(UNFOLLOW_USER_REQUEST, unfollow);
+}
+
+function loadFollowersAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.get(`/user/${userId}/followers`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollowers(action) {
+  try {
+    // yield call(LoadFollowersAPI); // call 동기 fork 비동기
+    const result = yield call(loadFollowersAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: LOAD_FOLLOWERS_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: LOAD_FOLLOWERS_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadFollowers() {
+  yield takeEvery(LOAD_FOLLOWERS_REQUEST, loadFollowers);
+}
+
+function loadFollowingsAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.get(`/user/${userId}/followings`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollowings(action) {
+  try {
+    // yield call(LoadFollowingsAPI); // call 동기 fork 비동기
+    const result = yield call(loadFollowingsAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: LOAD_FOLLOWINGS_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: LOAD_FOLLOWINGS_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadFollowings() {
+  yield takeEvery(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
+}
+
+function removeFollowerAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.delete(`/user/${userId}/follower`, {
+    withCredentials: true,
+  });
+}
+
+function* removeFollower(action) {
+  try {
+    // yield call(removeFollowerAPI); // call 동기 fork 비동기
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchRemoveFollower() {
+  yield takeEvery(REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchLogIn), fork(watchLogOut), fork(watchLoadUser), fork(watchSignUp)]);
+  yield all([
+    fork(watchLogIn), 
+    fork(watchLogOut), 
+    fork(watchLoadUser), 
+    fork(watchSignUp),
+    fork(watchFollow),
+    fork(watchUnfollow),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
+    fork(watchRemoveFollower),
+  ]);
 }
