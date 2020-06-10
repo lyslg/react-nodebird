@@ -7,7 +7,7 @@ import {
   LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
   FOLLOW_USER_REQUEST, FOLLOW_USER_SUCCESS, FOLLOW_USER_FAILURE, UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_SUCCESS, UNFOLLOW_USER_FAILURE,
   LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE, LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
-  REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE,
+  REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, EDIT_NICKNAME_REQUEST, EDIT_NICKNAME_SUCCESS, EDIT_NICKNAME_FAILURE,
 } from '../reducers/user';
 
 // LOG IN
@@ -96,8 +96,8 @@ function* watchLogOut() {
 function loadUserAPI(userId) {
   // 서버에 요청을 보내는 부분
   return axios.get(userId ? `/user/${userId}` : '/user/', {
-    withCredentials: true,
-  });
+    withCredentials: true, // 클라이언트에서 요청 보낼 때는 브라우저가 쿠키를 같이 동봉해줘요
+  }); // 서버사이드렌더링일 때는, 브라우저가 없어요
 }
 
 function* loadUser(action) {
@@ -178,9 +178,9 @@ function* watchUnfollow() {
   yield takeEvery(UNFOLLOW_USER_REQUEST, unfollow);
 }
 
-function loadFollowersAPI(userId) {
+function loadFollowersAPI(userId, offset = 0, limit = 3) {
   // 서버에 요청을 보내는 부분
-  return axios.get(`/user/${userId}/followers`, {
+  return axios.get(`/user/${userId || 0}/followers?offset=${offset}&limit=${limit}`, {
     withCredentials: true,
   });
 }
@@ -188,7 +188,7 @@ function loadFollowersAPI(userId) {
 function* loadFollowers(action) {
   try {
     // yield call(LoadFollowersAPI); // call 동기 fork 비동기
-    const result = yield call(loadFollowersAPI, action.data);
+    const result = yield call(loadFollowersAPI, action.data, action.offset);
     yield put({ // put은 dispatch 동일
       type: LOAD_FOLLOWERS_SUCCESS,
       data: result.data,
@@ -206,9 +206,9 @@ function* watchLoadFollowers() {
   yield takeEvery(LOAD_FOLLOWERS_REQUEST, loadFollowers);
 }
 
-function loadFollowingsAPI(userId) {
+function loadFollowingsAPI(userId, offset = 0, limit = 3) {
   // 서버에 요청을 보내는 부분
-  return axios.get(`/user/${userId}/followings`, {
+  return axios.get(`/user/${userId || 0}/followings?offset=${offset}&limit=${limit}`, {
     withCredentials: true,
   });
 }
@@ -216,7 +216,7 @@ function loadFollowingsAPI(userId) {
 function* loadFollowings(action) {
   try {
     // yield call(LoadFollowingsAPI); // call 동기 fork 비동기
-    const result = yield call(loadFollowingsAPI, action.data);
+    const result = yield call(loadFollowingsAPI, action.data, action.offset);
     yield put({ // put은 dispatch 동일
       type: LOAD_FOLLOWINGS_SUCCESS,
       data: result.data,
@@ -262,6 +262,34 @@ function* watchRemoveFollower() {
   yield takeEvery(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
+function editNicknameAPI(nickname) {
+  // 서버에 요청을 보내는 부분
+  return axios.patch('/user/nickname', { nickname }, {
+    withCredentials: true,
+  });
+}
+
+function* editNickname(action) {
+  try {
+    // yield call(editNicknameAPI); // call 동기 fork 비동기
+    const result = yield call(editNicknameAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: EDIT_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: EDIT_NICKNAME_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchEditNickname() {
+  yield takeEvery(EDIT_NICKNAME_REQUEST, editNickname);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogIn), 
@@ -273,5 +301,6 @@ export default function* userSaga() {
     fork(watchLoadFollowers),
     fork(watchLoadFollowings),
     fork(watchRemoveFollower),
+    fork(watchEditNickname),
   ]);
 }
