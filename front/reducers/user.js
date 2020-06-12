@@ -1,3 +1,5 @@
+import produce from 'immer'; // chapter7 code 
+
 export const initialState = {
   isLoggingOut: false, // 로그아웃 시도중
   isLoggingIn: false, // 로그인 시도중
@@ -73,229 +75,233 @@ export const signUpRequestAction = (data) => ({
 });
 
 export default (state = initialState, action) => {
-  switch (action.type) {
-    case LOG_IN_REQUEST: {
-      return {
-        ...state,
-        isLoggingIn: true,
-      };
-    }
-    case LOG_IN_SUCCESS: {
-      return {
-        ...state,
-        isLoggingIn: false,
-        // isLoggedIn: true,
-        me: action.data,
-        isLoading: false,
-      };
-    }
-    case LOG_IN_FAILURE: {
-      return {
-        ...state,
-        isLoggingIn: false,
-        // isLoggedIn: false,
-        logInErrorReason: action.error,
-        me: null,
-      };
-    }
-    case LOG_OUT_REQUEST: {
-      return {
-        ...state,
-        isLoggingOut: true,
-      };
-    }
-    case LOG_OUT_SUCCESS: {
-      return {
-        ...state,
-        isLoggingOut: false,
-        // isLoggedIn: false,
-        me: null,
-      };
-    }
-    case SIGN_UP_REQUEST: {
-      return {
-        ...state,
-        isSigningUp: true,
-        isSignedUp: false,
-      };
-    }
-    case SIGN_UP_SUCCESS: {
-      return {
-        ...state,
-        isSigningUp: false,
-        isSignedUp: true,
-      };
-    }
-    case SIGN_UP_FAILURE: {
-      return {
-        ...state,
-        isSigningUp: false,
-        signUpErrorReason: action.error,
-      };
-    }
-    case LOAD_USER_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case LOAD_USER_SUCCESS: {
-      if (action.me) {
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case LOG_IN_REQUEST: {
         return {
           ...state,
-          me: action.data,
+          isLoggingIn: true,
         };
       }
-      return {
-        ...state,
-        userInfo: action.data,
-      };
+      case LOG_IN_SUCCESS: {
+        return {
+          ...state,
+          isLoggingIn: false,
+          // isLoggedIn: true,
+          me: action.data,
+          isLoading: false,
+        };
+      }
+      case LOG_IN_FAILURE: {
+        return {
+          ...state,
+          isLoggingIn: false,
+          // isLoggedIn: false,
+          logInErrorReason: action.error,
+          me: null,
+        };
+      }
+      case LOG_OUT_REQUEST: {
+        return {
+          ...state,
+          isLoggingOut: true,
+        };
+      }
+      case LOG_OUT_SUCCESS: {
+        return {
+          ...state,
+          isLoggingOut: false,
+          // isLoggedIn: false,
+          me: null,
+        };
+      }
+      case SIGN_UP_REQUEST: {
+        return {
+          ...state,
+          isSigningUp: true,
+          isSignedUp: false,
+        };
+      }
+      case SIGN_UP_SUCCESS: {
+        return {
+          ...state,
+          isSigningUp: false,
+          isSignedUp: true,
+        };
+      }
+      case SIGN_UP_FAILURE: {
+        return {
+          ...state,
+          isSigningUp: false,
+          signUpErrorReason: action.error,
+        };
+      }
+      case LOAD_USER_REQUEST: {
+        return {
+          ...state,
+        };
+      }
+      case LOAD_USER_SUCCESS: {
+        if (action.me) {
+          return {
+            ...state,
+            me: action.data,
+          };
+        }
+        return {
+          ...state,
+          userInfo: action.data,
+        };
+      }
+      case LOAD_USER_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case FOLLOW_USER_REQUEST: {
+        return {
+          ...state,
+        };
+      }
+      case FOLLOW_USER_SUCCESS: {
+        draft.me.Followings.unshift({ id: action.data });
+        break;
+        // return {
+        //   ...state,
+        //   me: {
+        //     ...state.me,
+        //     Followings: [{ id: action.data }, ...state.me.Followings],
+        //   },
+        // };
+      }
+      case FOLLOW_USER_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case UNFOLLOW_USER_REQUEST: {
+        return {
+          ...state,
+        };
+      }
+      case UNFOLLOW_USER_SUCCESS: {
+        return {
+          ...state,
+          me: {
+            ...state.me,
+            Followings: state.me.Followings.filter((v) => v.id !== action.data),
+          },
+          followingList: state.followingList.filter((v) => v.id !== action.data),
+        };
+      }
+      case UNFOLLOW_USER_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case ADD_POST_TO_ME: {
+        return {
+          ...state,
+          me: {
+            ...state.me,
+            Posts: [{ id: action.data }, ...state.me.Posts],
+          },
+        };
+      }
+      case REMOVE_POST_OF_ME: {
+        return {
+          ...state,
+          me: {
+            ...state.me,
+            Posts: state.me.Posts.filter(v => v.id !== action.data),
+          },
+        };
+      }
+      case LOAD_FOLLOWERS_REQUEST: {
+        return {
+          ...state,
+          hasMoreFollower: action.offset ? state.hasMoreFollower : true, // 처음데이터를 가져올 때는 더보기 버튼 보여주기
+        };
+      }
+      case LOAD_FOLLOWERS_SUCCESS: {
+        return {
+          ...state,
+          followerList: state.followerList.concat(action.data),
+          hasMoreFollower: action.data.length === 3,
+        };
+      }
+      case LOAD_FOLLOWERS_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case LOAD_FOLLOWINGS_REQUEST: {
+        return {
+          ...state,
+          hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
+        };
+      }
+      case LOAD_FOLLOWINGS_SUCCESS: {
+        return {
+          ...state,
+          followingList: state.followingList.concat(action.data),
+          hasMoreFollowing: action.data.length === 3,
+        };
+      }
+      case LOAD_FOLLOWINGS_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case REMOVE_FOLLOWER_REQUEST: {
+        return {
+          ...state,
+        };
+      }
+      case REMOVE_FOLLOWER_SUCCESS: {
+        return {
+          ...state,
+          me: {
+            ...state.me,
+            Followers: state.me.Followers.filter(v => v.id !== action.data),
+          },
+          followerList: state.followerList.filter(v => v.id !== action.data),
+        };
+      }
+      case REMOVE_FOLLOWER_FAILURE: {
+        return {
+          ...state,
+        };
+      }
+      case EDIT_NICKNAME_REQUEST: {
+        return {
+          ...state,
+          isEditingNickname: true,
+          editNicknameErrorReason: '',
+        };
+      }
+      case EDIT_NICKNAME_SUCCESS: {
+        return {
+          ...state,
+          isEditingNickname: false,
+          me: {
+            ...state.me,
+            nickname: action.data,
+          },
+        };
+      }
+      case EDIT_NICKNAME_FAILURE: {
+        return {
+          ...state,
+          isEditingNickname: false,
+          editNicknameErrorReason: action.error,
+        };
+      }
+      default: {
+        return {
+          ...state,
+        };
+      }
     }
-    case LOAD_USER_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case FOLLOW_USER_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case FOLLOW_USER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followings: [{ id: action.data }, ...state.me.Followings],
-        },
-      };
-    }
-    case FOLLOW_USER_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case UNFOLLOW_USER_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case UNFOLLOW_USER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followings: state.me.Followings.filter((v) => v.id !== action.data),
-        },
-        followingList: state.followingList.filter((v) => v.id !== action.data),
-      };
-    }
-    case UNFOLLOW_USER_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case ADD_POST_TO_ME: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Posts: [{ id: action.data }, ...state.me.Posts],
-        },
-      };
-    }
-    case REMOVE_POST_OF_ME: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Posts: state.me.Posts.filter(v => v.id !== action.data),
-        },
-      };
-    }
-    case LOAD_FOLLOWERS_REQUEST: {
-      return {
-        ...state,
-        hasMoreFollower: action.offset ? state.hasMoreFollower : true, // 처음데이터를 가져올 때는 더보기 버튼 보여주기
-      };
-    }
-    case LOAD_FOLLOWERS_SUCCESS: {
-      return {
-        ...state,
-        followerList: state.followerList.concat(action.data),
-        hasMoreFollower: action.data.length === 3,
-      };
-    }
-    case LOAD_FOLLOWERS_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case LOAD_FOLLOWINGS_REQUEST: {
-      return {
-        ...state,
-        hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
-      };
-    }
-    case LOAD_FOLLOWINGS_SUCCESS: {
-      return {
-        ...state,
-        followingList: state.followingList.concat(action.data),
-        hasMoreFollowing: action.data.length === 3,
-      };
-    }
-    case LOAD_FOLLOWINGS_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case REMOVE_FOLLOWER_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case REMOVE_FOLLOWER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followers: state.me.Followers.filter(v => v.id !== action.data),
-        },
-        followerList: state.followerList.filter(v => v.id !== action.data),
-      };
-    }
-    case REMOVE_FOLLOWER_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case EDIT_NICKNAME_REQUEST: {
-      return {
-        ...state,
-        isEditingNickname: true,
-        editNicknameErrorReason: '',
-      };
-    }
-    case EDIT_NICKNAME_SUCCESS: {
-      return {
-        ...state,
-        isEditingNickname: false,
-        me: {
-          ...state.me,
-          nickname: action.data,
-        },
-      };
-    }
-    case EDIT_NICKNAME_FAILURE: {
-      return {
-        ...state,
-        isEditingNickname: false,
-        editNicknameErrorReason: action.error,
-      };
-    }
-    default: {
-      return {
-        ...state,
-      };
-    }
-  }
+  });
 };
