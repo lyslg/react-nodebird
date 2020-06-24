@@ -9,6 +9,7 @@ export const initialState = {
   isAddingComment: false,
   addCommentErrorReason: false, // 코멘트 업로드 실패 사유
   commentAdded: false, // 코멘트 업로드 성공
+  singlePost: null,
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';
@@ -57,6 +58,10 @@ export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
 export default (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -88,16 +93,14 @@ export default (state = initialState, action) => {
       case ADD_POST_SUCCESS: {
         draft.isAddingPost = false;
         draft.mainPosts.unshift(action.data);
-        draft.post.Added = true;
+        draft.postAdded = true;
         draft.imagePaths = [];
         break;
       }
       case ADD_POST_FAILURE: {
-        return {
-          ...state,
-          isAddingPost: false,
-          addPostErrorReason: action.error,
-        };
+        draft.isAddingPost = false;
+        draft.addPostErrorReason = action.error;
+        break;
       }
       case ADD_COMMENT_REQUEST: {
         return {
@@ -152,8 +155,8 @@ export default (state = initialState, action) => {
       case LOAD_MAIN_POSTS_REQUEST:
       case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_USER_POSTS_REQUEST: {
-        draft.mainPosts = action.lastId === 0 ? [] : state.mainPosts;
-        draft.hasMorePost = action.lastId ? state.hasMorePost : true;
+        draft.mainPosts = !action.lastId ? [] : draft.mainPosts;
+        draft.hasMorePost = action.lastId ? draft.hasMorePost : true;
         break;
       }
       case LOAD_MAIN_POSTS_SUCCESS:
@@ -237,9 +240,11 @@ export default (state = initialState, action) => {
         };
       }
       case REMOVE_POST_FAILURE: {
-        return {
-          ...state,
-        };
+        break;
+      }
+      case LOAD_POST_SUCCESS: {
+        draft.singlePost = action.data;
+        break;
       }
       default: {
         return {

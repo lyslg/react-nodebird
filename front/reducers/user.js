@@ -218,10 +218,9 @@ export default (state = initialState, action) => {
         };
       }
       case LOAD_FOLLOWERS_REQUEST: {
-        return {
-          ...state,
-          hasMoreFollower: action.offset ? state.hasMoreFollower : true, // 처음데이터를 가져올 때는 더보기 버튼 보여주기
-        };
+        draft.followerList = !action.offset ? [] : draft.followerList;
+        draft.hasMoreFollower = action.offset ? draft.hasMoreFollower : true; // 처음데이터를 가져올 때는 더보기 버튼 보여주기
+        break;
       }
       case LOAD_FOLLOWERS_SUCCESS: {
         return {
@@ -236,10 +235,9 @@ export default (state = initialState, action) => {
         };
       }
       case LOAD_FOLLOWINGS_REQUEST: {
-        return {
-          ...state,
-          hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
-        };
+        draft.followingList = !action.offset ? [] : draft.followingList;
+        draft.hasMoreFollowing = action.offset ? draft.hasMoreFollowing : true; // 처음데이터를 가져올 때는 더보기 버튼 보여주기
+        break;
       }
       case LOAD_FOLLOWINGS_SUCCESS: {
         return {

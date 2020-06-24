@@ -3,10 +3,16 @@ import { Button, Card, Avatar, Input, Form, List, Comment, Icon, Popover } from 
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+
 import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST, REMOVE_POST_REQUEST } from '../reducers/post';
-import PostImages from './PostImages';
-import PostCardContent from './PostCardContent';
+import PostImages from '../components/PostImages';
+import PostCardContent from '../components/PostCardContent';
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
+
+const CardWrapper = styled.div`
+  margin-bottom: 20px;
+`;
 
 const PostCard = ({ post }) => {
   const [commentFormOpend, setCommentFormOpened] = useState(false);
@@ -99,9 +105,8 @@ const PostCard = ({ post }) => {
   }, []);
 
   return (
-    <div>
+    <CardWrapper>
       <Card
-        key={+post.createdAt}
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
@@ -211,7 +216,7 @@ const PostCard = ({ post }) => {
           />
         </>
       )}
-    </div>
+    </CardWrapper>
   );
 };
 
@@ -220,7 +225,7 @@ PostCard.propTypes = {
     User: PropTypes.object,
     content: PropTypes.string,
     img: PropTypes.string,
-    createdAt: PropTypes.object,
+    createdAt: PropTypes.string,
   }).isRequired,
 };
 export default PostCard;
