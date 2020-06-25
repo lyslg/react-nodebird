@@ -86,7 +86,7 @@ export default (state = initialState, action) => {
       }
       case ADD_POST_REQUEST: {
         draft.isAddingPost = true;
-        draft.addPostErrorReason = ''; // adding?
+        draft.addPostErrorReason = '';
         draft.postAdded = false;
         break;
       }
