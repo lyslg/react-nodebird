@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "build": "cross-env BUNDLE_ANALYZE=both next build",
+    "build": "cross-env ANALYZE=true next build",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production next start"
   },
@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@ant-design/icons": "^4.0.6",
-    "@zeit/next-bundle-analyzer": "^0.1.2",
+    "@next/bundle-analyzer": "^9.4.4",
     "antd": "^3.17.0",
     "axios": "^0.19.2",
     "compression-webpack-plugin": "^4.0.0",

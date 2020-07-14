@@ -2,14 +2,19 @@ import React, { useCallback } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
 
 import { useInput } from '../pages/signup';
 import { LOG_IN_REQUEST } from '../reducers/user';
 
+const LoginError = styled.div`
+  color: red;
+`;
+
 const LoginForm = () => {
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { isLoggingIn } = useSelector((state) => state.user);
+  const { isLoggingIn, logInErrorReason } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const onSubmitForm = useCallback((e) => {
@@ -41,12 +46,13 @@ const LoginForm = () => {
           required
         />
       </div>
+      <LoginError>{logInErrorReason}</LoginError>
       <div style={{ marginTop: '10px' }}>
         <Button type="primary" htmlType="submit" loading={isLoggingIn}>
           로그인
         </Button>
         <Link href="/signup">
-          <a href="signup">
+          <a>
             <Button>회원가입</Button>
           </a>
         </Link>

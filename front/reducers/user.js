@@ -87,19 +87,15 @@ export default (state = initialState, action) => {
         return {
           ...state,
           isLoggingIn: false,
-          // isLoggedIn: true,
           me: action.data,
           isLoading: false,
         };
       }
       case LOG_IN_FAILURE: {
-        return {
-          ...state,
-          isLoggingIn: false,
-          // isLoggedIn: false,
-          logInErrorReason: action.error,
-          me: null,
-        };
+        draft.isLoggingIn = false;
+        draft.logInErrorReason = action.reason;
+        draft.me = null;
+        break;
       }
       case LOG_OUT_REQUEST: {
         return {
@@ -111,7 +107,6 @@ export default (state = initialState, action) => {
         return {
           ...state,
           isLoggingOut: false,
-          // isLoggedIn: false,
           me: null,
         };
       }

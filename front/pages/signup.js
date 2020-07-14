@@ -1,19 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Input, Form, Button, Checkbox,
-} from 'antd';
-import PropTypes from 'prop-types';
+import { Input, Form, Button, Checkbox } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
+import styled from 'styled-components';
 import { signUpRequestAction } from '../reducers/user';
 
-const TextInput = ({ value }) => {
-  return <div>{value}</div>;
-};
-
-TextInput.propTypes = {
-  value: PropTypes.string.isRequired,
-};
+const SignupError = styled.div`
+ color: red;
+`;
 
 export const useInput = (initValue = null) => {
   const [value, setter] = useState(initValue);
@@ -79,7 +73,6 @@ const Signup = () => {
   return (
     <>
       <Form onSubmit={onSubmit} style={{ padding: 10 }}>
-        <TextInput value="123" />
         <div>
           <label htmlFor="user-id">아이디</label>
           <br />
@@ -112,12 +105,12 @@ const Signup = () => {
             onChange={onChangePasswordCheck}
           />
         </div>
-        {PasswordError && <div style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</div>}
+        {PasswordError && <SignupError>비밀번호가 일치하지 않습니다.</SignupError>}
         <div>
           <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>
             약관동의
           </Checkbox>
-          {termError && <div style={{ color: 'red' }}>약관에 동의하셔야 합니다.</div>}
+          {termError && <SignupError>약관에 동의하셔야 합니다.</SignupError>}
         </div>
         <div style={{ marginTop: 10 }}>
           <Button type="primary" htmlType="submit" loading={isSigningUp}>
