@@ -19,27 +19,7 @@ db.sequelize.sync();
 // db.sequelize.sync({force:true});
 passportConfig();
 
-if (prod) {
-  app.use(hpp());
-  app.use(helmet());
-  app.use(morgan('combined'));
-  app.use(
-    cors({
-      origin: /nodebird\.com$/,
-      credentials: true,
-    })
-  );
-} else {
-  app.use(morgan('dev'));
-  app.use(
-    cors({
-      origin: true,
-      credentials: true,
-    })
-  );
-}
-
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use('/', express.static('uploads'));
 app.use(cors({
   origin: true,
