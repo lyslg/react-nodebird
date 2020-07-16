@@ -19,7 +19,27 @@ db.sequelize.sync();
 // db.sequelize.sync({force:true});
 passportConfig();
 
-app.use(morgan('dev'));
+if (prod) {
+  app.use(hpp());
+  app.use(helmet());
+  app.use(morgan('combined'));
+  app.use(
+    cors({
+      origin: /nodebird\.com$/,
+      credentials: true,
+    })
+  );
+} else {
+  app.use(morgan('dev'));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+    })
+  );
+}
+
+// app.use(morgan('dev'));
 app.use('/', express.static('uploads'));
 app.use(cors({
   origin: true,
@@ -42,7 +62,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.send('react nodebird 백엔드 정상동작!');
+  res.send('react nodebird 백엔드 정상 동작!');
 });
 
 // API는 다른 서비스가 내 서비스의 기능을 실행할 수 있게 열어둔 창구
