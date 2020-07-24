@@ -1,9 +1,19 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
+
 const db = require('../models');
 const { isLoggedIn } = require('./middleware');
+
 const router = express.Router();
+
+AWS.config.update({
+  region: 'ap-northeast-2',
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+})
 
 const upload = multer({
   storage: multer.diskStorage({
