@@ -1,6 +1,9 @@
-/front/node_modules
-/back/node_modules
-/front/.next
-/front/.env
-/back/.env
-/react-nodebird.pem
+# dependencies
+node_modules
+
+# build
+.next
+
+# misc
+.env
+react-nodebird.pem
