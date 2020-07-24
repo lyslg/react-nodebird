@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const hpp = require('hpp');
 const helmet = require('helmet')
+
 const passportConfig = require('./passport');
 const db = require('./models');
 const userAPIRouter = require('./routes/user');
@@ -26,10 +27,10 @@ if (prod) {
   app.use(helmet());
   app.use(morgan('combined'));
   app.use(cors({
-    origin: 'http://nodebirdyong.cf',
+    origin: /nodebird\.cf$/,
     credentials: true,
-  }))
-}else {
+  }));
+} else {
   app.use(morgan('dev'));
   app.use(cors({
     origin: true,
