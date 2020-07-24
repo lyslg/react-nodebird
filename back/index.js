@@ -19,7 +19,6 @@ const prod = process.env.NODE_ENV === 'production';
 dotenv.config();
 const app = express();
 db.sequelize.sync();
-// db.sequelize.sync({force:true});
 passportConfig();
 
 if (prod) {
@@ -29,7 +28,7 @@ if (prod) {
   app.use(cors({
     origin: 'http://nodebirdyong.cf',
     credentials: true,
-  }))
+  }));
 } else {
   app.use(morgan('dev'));
   app.use(cors({
@@ -37,6 +36,7 @@ if (prod) {
     credentials: true,
   }));
 }
+
 app.use('/', express.static('uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
