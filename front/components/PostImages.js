@@ -16,7 +16,7 @@ const PostImages = ({ images }) => {
   if (images.length === 1) {
     return (
       <>
-        <img src={images[0].src} alt="" onClick={onZoom} />
+        <img src={images[0].src.replace(/original\//, 'thumb/')} alt="" onClick={onZoom} />
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
     );
@@ -25,8 +25,8 @@ const PostImages = ({ images }) => {
     return (
       <>
         <div>
-          <img src={images[0].src} alt="" width="50%" onClick={onZoom} />
-          <img src={images[0].src} alt="" width="50%" onClick={onZoom} />
+          <img src={images[0].src.replace(/original\//, 'thumb/')} alt="" width="50%" onClick={onZoom} />
+          <img src={images[0].src.replace(/original\//, 'thumb/')} alt="" width="50%" onClick={onZoom} />
         </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
@@ -35,7 +35,7 @@ const PostImages = ({ images }) => {
   return (
     <>
       <div>
-        <img src={images[0].src} alt="" width="50%" onClick={onZoom} />
+        <img src={images[0].src.replace(/original\//, 'thumb/')} alt="" width="50%" onClick={onZoom} />
         <div style={{ display: 'inline-block', width: '50%', textAlign: 'center', verticalAlign: 'middle' }}>
           <PlusOutlined key="plus" onClick={onZoom} />
           <br />
