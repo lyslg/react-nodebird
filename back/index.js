@@ -19,39 +19,45 @@ const prod = process.env.NODE_ENV === 'production';
 dotenv.config();
 const app = express();
 db.sequelize.sync();
+// db.sequelize.sync({force:true});
 passportConfig();
 
 if (prod) {
   app.use(hpp());
   app.use(helmet());
   app.use(morgan('combined'));
-  app.use(cors({
-    origin: 'http://nodebirdyong.cf',
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      origin: 'http://nodebirdyong.cf',
+      credentials: true,
+    })
+  );
 } else {
   app.use(morgan('dev'));
-  app.use(cors({
-    origin: true,
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+    })
+  );
 }
-
 app.use('/', express.static('uploads'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(expressSession({
-  resave: false,
-  saveUninitialized: false,
-  secret: process.env.COOKIE_SECRET,
-  cookie: {
-    httpOnly: true,
-    secure: false, // https를 쓸 때 true
-    domain: prod && '.nodebirdyong.cf',
-  },
-  name: 'rnbck',
-}));
+app.use(
+  expressSession({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false, // https를 쓸 때 true
+      domain: prod && '.nodebirdyong.cf',
+    },
+    name: 'rnbck',
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
