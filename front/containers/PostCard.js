@@ -21,7 +21,6 @@ margin-bottom: 20px;
 
 const PostCard = memo(({ post }) => {
   const [commentFormOpend, setCommentFormOpened] = useState(false);
-  // const { me } = useSelector(state => state.user);
   const id = useSelector(state => state.user.me && state.user.me.id);
   const dispatch = useDispatch();
 
