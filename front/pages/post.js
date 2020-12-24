@@ -34,6 +34,7 @@ const Post = ({ id }) => {
   );
 };
 
+
 Post.propTypes = {
   id: PropTypes.number.isRequired,
 };
