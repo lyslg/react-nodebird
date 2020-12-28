@@ -7,7 +7,7 @@ import { LOAD_USER_REQUEST } from '../reducers/user';
 import PostCard from '../containers/PostCard';
 
 const User = ({ id }) => {
-  console.log(id);
+
   const { mainPosts } = useSelector((state) => state.post);
   const { userInfo } = useSelector((state) => state.user);
 
