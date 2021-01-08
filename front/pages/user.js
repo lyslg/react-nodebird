@@ -10,7 +10,7 @@ const User = ({ id }) => {
 
   const { mainPosts } = useSelector((state) => state.post);
   const { userInfo } = useSelector((state) => state.user);
-
+ 
   return (
     <div>
       {userInfo 
