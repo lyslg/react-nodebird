@@ -37,7 +37,7 @@ const PostCard = memo(({ post }) => {
       });
     }
   }, []);
-
+ 
   const onToggleLike = useCallback(() => {
     console.log(post);
     if (!id) {
